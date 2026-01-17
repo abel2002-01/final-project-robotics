@@ -1,0 +1,965 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <world name="office_world_professional">
+    
+    <!-- ==================== SCENE SETTINGS ==================== -->
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.85 1.0 1</background>
+      <shadows>true</shadows>
+      <sky>
+        <time>10.0</time>
+        <sunrise>6</sunrise>
+        <sunset>18</sunset>
+        <clouds>
+          <speed>5</speed>
+          <direction>1 0 0</direction>
+          <humidity>0.3</humidity>
+          <mean_size>0.5</mean_size>
+          <ambient>0.8 0.8 0.8 1</ambient>
+        </clouds>
+      </sky>
+    </scene>
+    
+    <!-- ==================== PHYSICS ==================== -->
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    
+    <!-- ==================== PLUGINS ==================== -->
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"/>
+
+    <!-- ==================== LIGHTING SYSTEM ==================== -->
+    
+    <!-- Ambient fill light -->
+    <light type="directional" name="ambient_fill">
+      <cast_shadows>false</cast_shadows>
+      <pose>0 0 5 0 0 0</pose>
+      <diffuse>0.4 0.42 0.45 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <direction>0 0 -1</direction>
+    </light>
+    
+    <!-- Sun light through windows -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>18 7 8 0 0 0</pose>
+      <diffuse>0.95 0.90 0.80 1</diffuse>
+      <specular>0.3 0.28 0.25 1</specular>
+      <direction>-0.5 -0.2 -0.8</direction>
+    </light>
+    
+    <!-- Ceiling lights (adjusted for wider rooms) -->
+    <light type="point" name="ceiling_light_1">
+      <cast_shadows>false</cast_shadows>
+      <pose>3 2 2.8 0 0 0</pose>
+      <diffuse>0.9 0.9 0.95 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>10</range>
+        <constant>0.3</constant>
+        <linear>0.1</linear>
+        <quadratic>0.05</quadratic>
+      </attenuation>
+    </light>
+    
+    <light type="point" name="ceiling_light_2">
+      <cast_shadows>false</cast_shadows>
+      <pose>7 5 2.8 0 0 0</pose>
+      <diffuse>0.9 0.9 0.95 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>10</range>
+        <constant>0.3</constant>
+        <linear>0.1</linear>
+        <quadratic>0.05</quadratic>
+      </attenuation>
+    </light>
+    
+    <light type="point" name="ceiling_light_3">
+      <cast_shadows>false</cast_shadows>
+      <pose>12 3 2.8 0 0 0</pose>
+      <diffuse>0.9 0.9 0.95 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>10</range>
+        <constant>0.3</constant>
+        <linear>0.1</linear>
+        <quadratic>0.05</quadratic>
+      </attenuation>
+    </light>
+
+    <!-- ==================== FLOOR (WIDER: 18m x 12m) ==================== -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>30 25</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0.8</mu>
+                <mu2>0.6</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>30 25</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.65 0.63 0.60 1</ambient>
+            <diffuse>0.75 0.73 0.70 1</diffuse>
+            <specular>0.3 0.3 0.3 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== OUTER WALLS (WIDER: 16m x 10m office) ==================== -->
+    <!-- Walls now span: x=-1 to 15, y=-1 to 9 -->
+    
+    <!-- North Wall -->
+    <model name="wall_north">
+      <static>true</static>
+      <pose>7 9 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>18 0.15 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>18 0.15 3</size></box></geometry>
+          <material>
+            <ambient>0.9 0.88 0.85 1</ambient>
+            <diffuse>0.95 0.93 0.90 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- South Wall (with entrance gap at x=5-9) -->
+    <model name="wall_south_left">
+      <static>true</static>
+      <pose>1.5 -1 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>5 0.15 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>5 0.15 3</size></box></geometry>
+          <material>
+            <ambient>0.9 0.88 0.85 1</ambient>
+            <diffuse>0.95 0.93 0.90 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <model name="wall_south_right">
+      <static>true</static>
+      <pose>12.5 -1 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>9 0.15 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>9 0.15 3</size></box></geometry>
+          <material>
+            <ambient>0.9 0.88 0.85 1</ambient>
+            <diffuse>0.95 0.93 0.90 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- West Wall -->
+    <model name="wall_west">
+      <static>true</static>
+      <pose>-1 4 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.15 11 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.15 11 3</size></box></geometry>
+          <material>
+            <ambient>0.9 0.88 0.85 1</ambient>
+            <diffuse>0.95 0.93 0.90 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- East Wall -->
+    <model name="wall_east">
+      <static>true</static>
+      <pose>15 4 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.15 11 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.15 11 3</size></box></geometry>
+          <material>
+            <ambient>0.9 0.88 0.85 1</ambient>
+            <diffuse>0.95 0.93 0.90 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== INTERIOR WALLS (Creating wider rooms) ==================== -->
+    
+    <!-- Interior wall separating Storage from main area -->
+    <model name="interior_wall_storage">
+      <static>true</static>
+      <pose>7 6.5 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>8 0.12 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>8 0.12 3</size></box></geometry>
+          <material>
+            <ambient>0.85 0.82 0.78 1</ambient>
+            <diffuse>0.90 0.87 0.83 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Interior wall for Office area (right side) -->
+    <model name="interior_wall_office">
+      <static>true</static>
+      <pose>10 2 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.12 7 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.12 7 3</size></box></geometry>
+          <material>
+            <ambient>0.85 0.82 0.78 1</ambient>
+            <diffuse>0.90 0.87 0.83 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== WINDOWS ==================== -->
+    
+    <!-- North window 1 -->
+    <model name="window_north_1">
+      <static>true</static>
+      <pose>3 9.05 1.8 0 0 0</pose>
+      <link name="link">
+        <visual name="glass">
+          <geometry><box><size>1.5 0.05 1.2</size></box></geometry>
+          <material>
+            <ambient>0.5 0.6 0.8 0.4</ambient>
+            <diffuse>0.6 0.7 0.9 0.4</diffuse>
+            <specular>0.9 0.9 0.9 1</specular>
+          </material>
+        </visual>
+        <visual name="frame">
+          <geometry><box><size>1.6 0.08 1.3</size></box></geometry>
+          <material>
+            <ambient>0.3 0.3 0.3 1</ambient>
+            <diffuse>0.4 0.4 0.4 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- North window 2 -->
+    <model name="window_north_2">
+      <static>true</static>
+      <pose>11 9.05 1.8 0 0 0</pose>
+      <link name="link">
+        <visual name="glass">
+          <geometry><box><size>1.5 0.05 1.2</size></box></geometry>
+          <material>
+            <ambient>0.5 0.6 0.8 0.4</ambient>
+            <diffuse>0.6 0.7 0.9 0.4</diffuse>
+            <specular>0.9 0.9 0.9 1</specular>
+          </material>
+        </visual>
+        <visual name="frame">
+          <geometry><box><size>1.6 0.08 1.3</size></box></geometry>
+          <material>
+            <ambient>0.3 0.3 0.3 1</ambient>
+            <diffuse>0.4 0.4 0.4 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== ROOM SIGNS ==================== -->
+    
+    <!-- Reception Sign -->
+    <model name="sign_reception">
+      <static>true</static>
+      <pose>2 -0.9 2.2 0 0 0</pose>
+      <link name="link">
+        <visual name="sign">
+          <geometry><box><size>0.8 0.02 0.15</size></box></geometry>
+          <material>
+            <ambient>0.1 0.3 0.5 1</ambient>
+            <diffuse>0.15 0.4 0.6 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Storage Sign -->
+    <model name="sign_storage">
+      <static>true</static>
+      <pose>4 6.65 2.2 0 0 0</pose>
+      <link name="link">
+        <visual name="sign">
+          <geometry><box><size>0.6 0.02 0.15</size></box></geometry>
+          <material>
+            <ambient>0.1 0.3 0.5 1</ambient>
+            <diffuse>0.15 0.4 0.6 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Office Sign -->
+    <model name="sign_office">
+      <static>true</static>
+      <pose>12 -0.9 2.2 0 0 0</pose>
+      <link name="link">
+        <visual name="sign">
+          <geometry><box><size>0.5 0.02 0.15</size></box></geometry>
+          <material>
+            <ambient>0.1 0.3 0.5 1</ambient>
+            <diffuse>0.15 0.4 0.6 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== BATHROOMS ==================== -->
+    
+    <!-- Public Bathroom 1 (near corridor/break area) -->
+    <!-- Bathroom walls -->
+    <model name="bathroom1_wall_north">
+      <static>true</static>
+      <pose>8 2.5 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>3 0.12 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3 0.12 3</size></box></geometry>
+          <material>
+            <ambient>0.85 0.82 0.78 1</ambient>
+            <diffuse>0.90 0.87 0.83 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <model name="bathroom1_wall_south">
+      <static>true</static>
+      <pose>8 -0.5 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2.5 0.12 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.5 0.12 3</size></box></geometry>
+          <material>
+            <ambient>0.85 0.82 0.78 1</ambient>
+            <diffuse>0.90 0.87 0.83 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <model name="bathroom1_wall_east">
+      <static>true</static>
+      <pose>10.25 1 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.12 3 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.12 3 3</size></box></geometry>
+          <material>
+            <ambient>0.85 0.82 0.78 1</ambient>
+            <diffuse>0.90 0.87 0.83 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Bathroom sign -->
+    <model name="sign_bathroom1">
+      <static>true</static>
+      <pose>8.5 -0.9 2.2 0 0 0</pose>
+      <link name="link">
+        <visual name="sign">
+          <geometry><box><size>0.5 0.02 0.15</size></box></geometry>
+          <material>
+            <ambient>0.5 0.2 0.1 1</ambient>
+            <diffuse>0.7 0.3 0.15 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Toilet 1 (simple box model) -->
+    <model name="toilet1">
+      <static>true</static>
+      <pose>9.5 1.2 0.4 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.5 0.7 0.8</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.5 0.7 0.8</size></box></geometry>
+          <material>
+            <ambient>0.95 0.95 0.95 1</ambient>
+            <diffuse>0.98 0.98 0.98 1</diffuse>
+            <specular>0.5 0.5 0.5 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Sink 1 (simple model) -->
+    <model name="sink1">
+      <static>true</static>
+      <pose>7.5 1.2 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+          <material>
+            <ambient>0.9 0.9 0.92 1</ambient>
+            <diffuse>0.95 0.95 0.97 1</diffuse>
+            <specular>0.7 0.7 0.7 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Wastebasket in bathroom 1 -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrashBin</uri>
+      <name>bathroom1_trash</name>
+      <pose>7.5 2 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Public Bathroom 2 (near office area) -->
+    <!-- Bathroom walls -->
+    <model name="bathroom2_wall_north">
+      <static>true</static>
+      <pose>13 2.5 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2.5 0.12 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.5 0.12 3</size></box></geometry>
+          <material>
+            <ambient>0.85 0.82 0.78 1</ambient>
+            <diffuse>0.90 0.87 0.83 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <model name="bathroom2_wall_south">
+      <static>true</static>
+      <pose>13 -0.5 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2 0.12 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2 0.12 3</size></box></geometry>
+          <material>
+            <ambient>0.85 0.82 0.78 1</ambient>
+            <diffuse>0.90 0.87 0.83 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <model name="bathroom2_wall_west">
+      <static>true</static>
+      <pose>11.75 1 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.12 3 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.12 3 3</size></box></geometry>
+          <material>
+            <ambient>0.85 0.82 0.78 1</ambient>
+            <diffuse>0.90 0.87 0.83 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Bathroom sign -->
+    <model name="sign_bathroom2">
+      <static>true</static>
+      <pose>12.5 -0.9 2.2 0 0 0</pose>
+      <link name="link">
+        <visual name="sign">
+          <geometry><box><size>0.5 0.02 0.15</size></box></geometry>
+          <material>
+            <ambient>0.5 0.2 0.1 1</ambient>
+            <diffuse>0.7 0.3 0.15 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Toilet 2 -->
+    <model name="toilet2">
+      <static>true</static>
+      <pose>12.5 1.2 0.4 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.5 0.7 0.8</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.5 0.7 0.8</size></box></geometry>
+          <material>
+            <ambient>0.95 0.95 0.95 1</ambient>
+            <diffuse>0.98 0.98 0.98 1</diffuse>
+            <specular>0.5 0.5 0.5 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Sink 2 -->
+    <model name="sink2">
+      <static>true</static>
+      <pose>13.5 1.2 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+          <material>
+            <ambient>0.9 0.9 0.92 1</ambient>
+            <diffuse>0.95 0.95 0.97 1</diffuse>
+            <specular>0.7 0.7 0.7 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Wastebasket in bathroom 2 -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrashBin</uri>
+      <name>bathroom2_trash</name>
+      <pose>13.5 2 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+
+    <!-- ==================== DELIVERY WAYPOINTS ==================== -->
+    
+    <!-- Waypoint 1: Reception -->
+    <model name="waypoint_reception">
+      <static>true</static>
+      <pose>2 1 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="marker">
+          <geometry><cylinder><radius>0.3</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.1 0.6 0.2 1</ambient>
+            <diffuse>0.2 0.8 0.3 1</diffuse>
+          </material>
+        </visual>
+        <visual name="label">
+          <pose>0 0 0.02 0 0 0</pose>
+          <geometry><cylinder><radius>0.1</radius><length>0.01</length></cylinder></geometry>
+          <material>
+            <ambient>0.9 0.9 0.9 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Waypoint 2: Storage -->
+    <model name="waypoint_storage">
+      <static>true</static>
+      <pose>4 7.5 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="marker">
+          <geometry><cylinder><radius>0.3</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.6 0.4 0.1 1</ambient>
+            <diffuse>0.8 0.5 0.2 1</diffuse>
+          </material>
+        </visual>
+        <visual name="label">
+          <pose>0 0 0.02 0 0 0</pose>
+          <geometry><cylinder><radius>0.1</radius><length>0.01</length></cylinder></geometry>
+          <material>
+            <ambient>0.9 0.9 0.9 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Waypoint 3: Office -->
+    <model name="waypoint_office">
+      <static>true</static>
+      <pose>12.5 3 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="marker">
+          <geometry><cylinder><radius>0.3</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.1 0.3 0.7 1</ambient>
+            <diffuse>0.2 0.4 0.9 1</diffuse>
+          </material>
+        </visual>
+        <visual name="label">
+          <pose>0 0 0.02 0 0 0</pose>
+          <geometry><cylinder><radius>0.1</radius><length>0.01</length></cylinder></geometry>
+          <material>
+            <ambient>0.9 0.9 0.9 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== GAZEBO FUEL REALISTIC MODELS ==================== -->
+    
+    <!-- ========== RECEPTION AREA (Left side: x=0-6, y=-1 to 6.5) ========== -->
+    <!-- Spacious reception with proper spacing -->
+    
+    <!-- Reception Desk -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Table</uri>
+      <name>reception_desk</name>
+      <pose>1.5 1.8 0 0 0 3.14</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Reception Chair (behind desk, properly spaced) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlue</uri>
+      <name>reception_chair</name>
+      <pose>1.5 0.5 0 0 0 3.14</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Visitor Chairs (waiting area - properly spaced) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlue</uri>
+      <name>visitor_chair_1</name>
+      <pose>-0.5 2.5 0 0 0 1.57</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlue</uri>
+      <name>visitor_chair_2</name>
+      <pose>-0.5 4 0 0 0 1.57</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlue</uri>
+      <name>visitor_chair_3</name>
+      <pose>-0.5 5.5 0 0 0 1.57</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Reception Trash Bin -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrashBin</uri>
+      <name>reception_trash</name>
+      <pose>3.5 0.5 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Cabinet at Reception -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Cabinet</uri>
+      <name>reception_cabinet</name>
+      <pose>-0.7 1 0 0 0 1.57</pose>
+      <static>true</static>
+    </include>
+
+    <!-- Reception Couch for visitors -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Sofa</uri>
+      <name>reception_couch</name>
+      <pose>0.8 3.8 0 0 0 1.57</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- ========== CORRIDOR/BREAK AREA (Middle: x=6-10, y=0 to 6.5) ========== -->
+    <!-- Corridor cones REMOVED per user request -->
+    
+    <!-- Break Table (properly spaced, no overlapping) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Table</uri>
+      <name>break_table</name>
+      <pose>7 3.5 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Chairs around break table (proper spacing - 1m from table) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlue</uri>
+      <name>break_chair_1</name>
+      <pose>7 2.2 0 0 0 -1.57</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlue</uri>
+      <name>break_chair_2</name>
+      <pose>7 4.8 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlue</uri>
+      <name>break_chair_3</name>
+      <pose>5.8 3.5 0 0 0 1.57</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlue</uri>
+      <name>break_chair_4</name>
+      <pose>8.2 3.5 0 0 0 -1.57</pose>
+      <static>true</static>
+    </include>
+
+    <!-- Coffee Machine in break area -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/VendingMachine</uri>
+      <name>coffee_machine</name>
+      <pose>8.2 1.8 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Corridor Trash -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrashBin</uri>
+      <name>corridor_trash</name>
+      <pose>8 1.5 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Fire Extinguisher (safety) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Fire Extinguisher</uri>
+      <name>fire_ext_corridor</name>
+      <pose>9.5 0.8 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- ========== STORAGE AREA (Top: x=0-10, y=6.5-9) ========== -->
+    
+    <!-- Storage Shelving (well spaced) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Bookshelf</uri>
+      <name>storage_shelf_1</name>
+      <pose>1.5 8.9 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Bookshelf</uri>
+      <name>storage_shelf_2</name>
+      <pose>4.5 8.9 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Cardboard Boxes (organized stacks with proper spacing) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Cardboard box</uri>
+      <name>box_stack_1a</name>
+      <pose>0.5 7 0 0 0 0.1</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Cardboard box</uri>
+      <name>box_stack_1b</name>
+      <pose>0.5 7 0.35 0 0 -0.05</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Cardboard box</uri>
+      <name>box_stack_2a</name>
+      <pose>3 7 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Cardboard box</uri>
+      <name>box_stack_2b</name>
+      <pose>3 7 0.35 0 0 0.15</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Cardboard box</uri>
+      <name>box_stack_3</name>
+      <pose>6.5 7.2 0 0 0 -0.1</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Cardboard box</uri>
+      <name>box_stack_4</name>
+      <pose>6.8 7.7 0 0 0 0.2</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Storage Table -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Table</uri>
+      <name>storage_table</name>
+      <pose>2.5 8.2 0 0 0 1.57</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Filing Cabinet in Storage -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Cabinet</uri>
+      <name>storage_cabinet</name>
+      <pose>8 7.8 0 0 0 3.14</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- ========== OFFICE AREA (Right: x=10-15, y=-1 to 6.5) ========== -->
+    
+    <!-- Office Desk 1 (properly spaced) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Table</uri>
+      <name>office_desk_1</name>
+      <pose>12.5 1 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Office Chair 1 (properly behind desk, 0.8m spacing) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlue</uri>
+      <name>office_chair_1</name>
+      <pose>12.5 2.2 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Office Desk 2 (well separated from desk 1) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Table</uri>
+      <name>office_desk_2</name>
+      <pose>12.5 4.5 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Office Chair 2 (properly behind desk 2) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlue</uri>
+      <name>office_chair_2</name>
+      <pose>12.5 5.7 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Office Bookshelf -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Bookshelf</uri>
+      <name>office_bookshelf</name>
+      <pose>14 3.5 0 0 0 1.57</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Office Filing Cabinets (properly spaced) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Cabinet</uri>
+      <name>office_cabinet_1</name>
+      <pose>10.5 0.5 0 0 0 1.57</pose>
+      <static>true</static>
+    </include>
+    
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Cabinet</uri>
+      <name>office_cabinet_2</name>
+      <pose>10.5 4 0 0 0 1.57</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Office Trash -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrashBin</uri>
+      <name>office_trash</name>
+      <pose>11 2.5 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- Fire Extinguisher (office) -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Fire Extinguisher</uri>
+      <name>fire_ext_office</name>
+      <pose>14.5 -0.5 0 0 0 0</pose>
+      <static>true</static>
+    </include>
+    
+    <!-- ========== OUTDOOR AREA ========== -->
+    
+    <!-- Dumpster -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Dumpster</uri>
+      <name>outdoor_dumpster</name>
+      <pose>10 -3 0 0 0 1.57</pose>
+      <static>true</static>
+    </include>
+
+  </world>
+</sdf>

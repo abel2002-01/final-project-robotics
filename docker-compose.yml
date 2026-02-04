@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  ros2_nav:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ros2_nav_test:jazzy
+    container_name: ros2_navigation
+    
+    # Required for GUI (Gazebo, RViz)
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/ros2_ws/src/delivery_robot_project/fastdds_profile.xml
+      - LIBGL_ALWAYS_SOFTWARE=1
+    
+    # Mount X11 socket for display
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - .:/ros2_ws/src/delivery_robot_project:rw
+      - ~/.Xauthority:/root/.Xauthority:rw
+    
+    # Network mode for ROS2 communication
+    network_mode: host
+    
+    # GPU passthrough (if available)
+    # Uncomment for NVIDIA GPU support:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    
+    # Keep container running
+    stdin_open: true
+    tty: true
+    
+    # Run navigation with SmacPlanner by default
+    command: >
+      bash -c "
+        echo '============================================'
+        echo '  ROS2 Jazzy + Gazebo Navigation Container'
+        echo '  Planner: SmacPlanner2D'
+        echo '============================================'
+        echo ''
+        echo 'Starting navigation system...'
+        sleep 2
+        ros2 launch delivery_robot full_navigation.launch.py planner:=smac
+      "
+
+  # Alternative service for NavFn planner
+  ros2_nav_navfn:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ros2_nav_test:jazzy
+    container_name: ros2_navigation_navfn
+    
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/ros2_ws/src/delivery_robot_project/fastdds_profile.xml
+      - LIBGL_ALWAYS_SOFTWARE=1
+    
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - .:/ros2_ws/src/delivery_robot_project:rw
+      - ~/.Xauthority:/root/.Xauthority:rw
+    
+    network_mode: host
+    stdin_open: true
+    tty: true
+    
+    profiles:
+      - navfn
+    
+    command: >
+      bash -c "
+        echo '============================================'
+        echo '  ROS2 Jazzy + Gazebo Navigation Container'
+        echo '  Planner: NavFn'
+        echo '============================================'
+        ros2 launch delivery_robot full_navigation.launch.py planner:=navfn
+      "
+

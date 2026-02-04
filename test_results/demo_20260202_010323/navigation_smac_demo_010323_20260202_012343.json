@@ -1,0 +1,54 @@
+{
+  "planner": "smac",
+  "run_id": "demo_010323",
+  "timestamp": "2026-02-02T01:04:18.261347",
+  "summary": {
+    "total_time_sec": 9.843,
+    "total_distance_m": 0.0,
+    "total_path_length_m": 0.0,
+    "min_obstacle_m": null,
+    "success_count": 1,
+    "failure_count": 2,
+    "waypoints_total": 3,
+    "success_rate_percent": 33.3,
+    "path_efficiency_percent": null
+  },
+  "waypoints": [
+    {
+      "name": "Reception",
+      "goal": {
+        "x": 2.0,
+        "y": 1.0
+      },
+      "time_sec": 1.433,
+      "distance_traveled_m": 0.0,
+      "path_length_m": 0.0,
+      "min_obstacle_m": null,
+      "success": true
+    },
+    {
+      "name": "Storage",
+      "goal": {
+        "x": 4.0,
+        "y": 7.5
+      },
+      "time_sec": 8.275,
+      "distance_traveled_m": 0.0,
+      "path_length_m": 0.0,
+      "min_obstacle_m": null,
+      "success": false
+    },
+    {
+      "name": "Office",
+      "goal": {
+        "x": 12.5,
+        "y": 3.0
+      },
+      "time_sec": 0.112,
+      "distance_traveled_m": 0.0,
+      "path_length_m": 0.0,
+      "min_obstacle_m": null,
+      "success": false
+    }
+  ]
+}

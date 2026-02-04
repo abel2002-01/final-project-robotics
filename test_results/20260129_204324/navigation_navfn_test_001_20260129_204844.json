@@ -1,0 +1,54 @@
+{
+  "planner": "navfn",
+  "run_id": "test_001",
+  "timestamp": "2026-01-29T20:44:43.469274",
+  "summary": {
+    "total_time_sec": 3.704,
+    "total_distance_m": 0.0,
+    "total_path_length_m": 0.0,
+    "min_obstacle_m": null,
+    "success_count": 1,
+    "failure_count": 2,
+    "waypoints_total": 3,
+    "success_rate_percent": 33.3,
+    "path_efficiency_percent": null
+  },
+  "waypoints": [
+    {
+      "name": "Reception",
+      "goal": {
+        "x": 2.0,
+        "y": 1.0
+      },
+      "time_sec": 0.306,
+      "distance_traveled_m": 0.0,
+      "path_length_m": 0.0,
+      "min_obstacle_m": null,
+      "success": true
+    },
+    {
+      "name": "Storage",
+      "goal": {
+        "x": 4.0,
+        "y": 7.5
+      },
+      "time_sec": 2.866,
+      "distance_traveled_m": 0.0,
+      "path_length_m": 0.0,
+      "min_obstacle_m": null,
+      "success": false
+    },
+    {
+      "name": "Office",
+      "goal": {
+        "x": 12.5,
+        "y": 3.0
+      },
+      "time_sec": 0.473,
+      "distance_traveled_m": 0.0,
+      "path_length_m": 0.0,
+      "min_obstacle_m": null,
+      "success": false
+    }
+  ]
+}

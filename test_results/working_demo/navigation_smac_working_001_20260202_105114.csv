@@ -1,0 +1,17 @@
+=== NAVIGATION METRICS ===
+planner,smac
+run_id,working_001
+timestamp,2026-02-02T08:43:43.772929
+total_time_sec,72.07
+total_distance_m,0.00
+total_path_length_m,0.00
+min_obstacle_m,N/A
+success_count,0
+failure_count,3
+success_rate,0.0%
+
+=== WAYPOINT DETAILS ===
+waypoint,goal_x,goal_y,time_sec,distance_m,path_length_m,min_obstacle_m,success
+Reception,2.00,1.00,6.79,0.00,0.00,N/A,False
+Storage,4.00,7.50,63.94,0.00,0.00,N/A,False
+Office,12.50,3.00,1.25,0.00,0.00,N/A,False

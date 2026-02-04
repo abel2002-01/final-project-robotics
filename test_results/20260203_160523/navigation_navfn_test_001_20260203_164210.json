@@ -1,0 +1,66 @@
+{
+  "planner": "navfn",
+  "run_id": "test_001",
+  "timestamp": "2026-02-03T16:07:55.652895",
+  "summary": {
+    "total_time_sec": 2031.564,
+    "total_distance_m": 0.0,
+    "total_path_length_m": 0.0,
+    "min_obstacle_m": null,
+    "success_count": 1,
+    "failure_count": 3,
+    "waypoints_total": 4,
+    "success_rate_percent": 25.0,
+    "path_efficiency_percent": null
+  },
+  "waypoints": [
+    {
+      "name": "Reception",
+      "goal": {
+        "x": 2.0,
+        "y": 1.0
+      },
+      "time_sec": 0.101,
+      "distance_traveled_m": 0.0,
+      "path_length_m": 0.0,
+      "min_obstacle_m": null,
+      "success": true
+    },
+    {
+      "name": "LeftPath",
+      "goal": {
+        "x": 1.2,
+        "y": 5.0
+      },
+      "time_sec": 1888.368,
+      "distance_traveled_m": 0.0,
+      "path_length_m": 0.0,
+      "min_obstacle_m": null,
+      "success": false
+    },
+    {
+      "name": "Storage",
+      "goal": {
+        "x": 2.0,
+        "y": 7.5
+      },
+      "time_sec": 10.376,
+      "distance_traveled_m": 0.0,
+      "path_length_m": 0.0,
+      "min_obstacle_m": null,
+      "success": false
+    },
+    {
+      "name": "Office",
+      "goal": {
+        "x": 12.0,
+        "y": 6.5
+      },
+      "time_sec": 132.657,
+      "distance_traveled_m": 0.0,
+      "path_length_m": 0.0,
+      "min_obstacle_m": null,
+      "success": false
+    }
+  ]
+}

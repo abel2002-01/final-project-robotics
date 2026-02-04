@@ -1,44 +1,38 @@
 """
-Launch file to spawn TurtleBot3 Waffle in Gazebo.
+Launch file to spawn the delivery robot in Gazebo.
 Robot spawns at Reception waypoint (x=2, y=1).
-Uses gz service command to spawn model from Fuel.
+Uses local SDF model file.
 """
 
 import os
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, TimerAction
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
-    # Reception waypoint pose (from office_world.sdf)
-    initial_x = LaunchConfiguration('x', default='2.0')
-    initial_y = LaunchConfiguration('y', default='1.0')
-    initial_z = LaunchConfiguration('z', default='0.01')
-    initial_yaw = LaunchConfiguration('yaw', default='0.0')
-    robot_name = LaunchConfiguration('robot_name', default='turtlebot3_waffle')
-    world_name = LaunchConfiguration('world_name', default='office_world_professional')
+    pkg_delivery_robot = get_package_share_directory('delivery_robot')
     
-    # Spawn robot using gz service
-    # Wait a bit for Gazebo to be ready
+    # Robot model path
+    robot_sdf = os.path.join(pkg_delivery_robot, 'models', 'delivery_robot.sdf')
+    
+    # Spawn robot using gz service with sdf_filename pointing to local file
     spawn_robot = TimerAction(
-        period=2.0,
+        period=3.0,
         actions=[
             ExecuteProcess(
                 cmd=[
-                    'gz', 'service', '-s', ['/world/', world_name, '/create'],
-                    '--reqtype', 'gz.msgs.EntityFactory',
-                    '--reptype', 'gz.msgs.Boolean',
-                    '--timeout', '1000',
-                    '--req', [
-                        'sdf_filename: "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Turtlebot3 Waffle", ',
-                        'name: "', robot_name, '", ',
-                        'pose: {position: {x: ', initial_x, ', y: ', initial_y, ', z: ', initial_z, '}, ',
-                        'orientation: {yaw: ', initial_yaw, '}}'
-                    ]
+                    'bash', '-c',
+                    f'gz service -s /world/office_world_professional/create '
+                    f'--reqtype gz.msgs.EntityFactory '
+                    f'--reptype gz.msgs.Boolean '
+                    f'--timeout 5000 '
+                    f'--req \'sdf_filename: "{robot_sdf}" '
+                    f'name: "delivery_robot" '
+                    f'pose: {{position: {{x: 2.0 y: 1.0 z: 0.0}} orientation: {{w: 1.0 x: 0.0 y: 0.0 z: 0.0}}}}\''
                 ],
-                output='screen',
-                shell=True
+                output='screen'
             )
         ]
     )
@@ -54,26 +48,5 @@ def generate_launch_description():
             default_value='1.0',
             description='Initial y position (Reception waypoint)'
         ),
-        DeclareLaunchArgument(
-            'z',
-            default_value='0.01',
-            description='Initial z position'
-        ),
-        DeclareLaunchArgument(
-            'yaw',
-            default_value='0.0',
-            description='Initial yaw orientation (radians)'
-        ),
-        DeclareLaunchArgument(
-            'robot_name',
-            default_value='turtlebot3_waffle',
-            description='Name of the robot model'
-        ),
-        DeclareLaunchArgument(
-            'world_name',
-            default_value='office_world_professional',
-            description='Name of the Gazebo world'
-        ),
         spawn_robot,
     ])
-

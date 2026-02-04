@@ -44,6 +44,11 @@ setup(
         'console_scripts': [
             'waypoint_navigator = delivery_robot.waypoint_navigator:main',
             'metrics_logger = delivery_robot.metrics_logger:main',
+            'auto_explore = delivery_robot.auto_explore:main',
+            'odom_to_tf = delivery_robot.odom_to_tf:main',
+            'scan_timestamp_fix = delivery_robot.scan_timestamp_fix:main',
+            'timestamp_republisher = delivery_robot.timestamp_republisher:main',
+            'path_executor = delivery_robot.path_executor:main',
         ],
     },
 )

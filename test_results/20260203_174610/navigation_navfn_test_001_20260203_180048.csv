@@ -1,0 +1,19 @@
+=== NAVIGATION METRICS ===
+planner,navfn
+run_id,test_001
+timestamp,2026-02-03T17:49:02.068056
+total_time_sec,684.50
+total_distance_m,0.00
+total_path_length_m,0.00
+min_obstacle_m,N/A
+success_count,0
+failure_count,5
+success_rate,0.0%
+
+=== WAYPOINT DETAILS ===
+waypoint,goal_x,goal_y,time_sec,distance_m,path_length_m,min_obstacle_m,success
+Reception,2.00,1.00,135.90,0.00,0.00,N/A,False
+Corridor,2.20,3.50,134.49,0.00,0.00,N/A,False
+Gap,2.50,6.00,137.89,0.00,0.00,N/A,False
+Storage,2.00,7.50,138.43,0.00,0.00,N/A,False
+Office,12.00,6.50,137.63,0.00,0.00,N/A,False
